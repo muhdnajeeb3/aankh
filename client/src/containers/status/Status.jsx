@@ -34,7 +34,8 @@ const Status = ({
 	return (
 		<div className="status-dashboard">
 			<div className="logo">
-				<img src={logo} alt="aankh-logo" />
+			<img src='https://www.schneideit.com/wp-content/uploads/2020/12/schneide-logo.svg' alt="schneide-logo" />
+
 			</div>
 
 			<h1 className="title-heading">Test Dashboard</h1>

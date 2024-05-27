@@ -20,9 +20,13 @@ app.use('/public', express.static(path.join(__dirname, "uploads")));
 app.use('/api', userRoutes)
 app.use('/api', testRoutes)
 
+app.get('/',(req,res)=>{
+    res.send('server is ready')
+})
+
 // mongodb connection
 const connectDB = (dburl) => {
-    return mongoose.connect(dburl, {
+    return mongoose.connect('mongodb+srv://amazona:1234@tly.nu8g3re.mongodb.net/?retryWrites=true&w=majority', {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         // useCreateIndex: true,
@@ -34,9 +38,10 @@ const connectDB = (dburl) => {
 
 const start = async () => {
     try {
-        await connectDB(process.env.dburl);
-        app.listen(process.env.PORT, () => {
-            console.log(`Server is running on port ${process.env.PORT}`);
+        const PORT =process.env.PORT || 5000;
+        await connectDB('mongodb+srv://amazona:1234@tly.nu8g3re.mongodb.net/?retryWrites=true&w=majority');
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
         })
     } catch (error) {
         console.log(error);

@@ -5,11 +5,11 @@ const register = (req, res) => {
     User.findOne({ email: req.body.email })
         .exec((error, user) => {
             // if email-id already exit
-            if (user) return res.status(409).json({ msg: `User alreay register` });
+            if (user) return res.status(409).json({ msg: `User already register` });
 
             // if email-id not found => new user
             const { fullName, email, password } = req.body;
-            const profilePicture = req.file.filename;
+            const profilePicture = req?.file?.filename;
 
             const _user = new User({
                 fullName: fullName,
@@ -28,12 +28,14 @@ const register = (req, res) => {
 const signIn = (req, res) => {
     User.findOne({ email: req.body.email }) // finding user by email
         .exec((error, user) => {
+            console.log('email',user);
             // if something happend like internal error
             if (error) return res.status(400).json({ msg: "Bad luck!, Must be internal error or you messed up", error });
             // if user found then we will verify his password
             if (user) {
                 // if password is correct then we will create a token
                 if (user.authenticate(req.body.password)) {
+                    console.log(user.authenticate(req.body.password));
                     // we will create token
                     const token = jwt.sign(
                         { id: user._id, email: user.email },
@@ -52,7 +54,7 @@ const signIn = (req, res) => {
                 }
             }
             if (!user) {
-                return res.status(404).json({ msg: "User dose not exit" });
+                return res.status(404).json({ msg: "User does not exit" });
             }
         })
 }
