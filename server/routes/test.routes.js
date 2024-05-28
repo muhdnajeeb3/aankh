@@ -28,7 +28,7 @@ router.get("/test-live-status/:test_code", requireSignIn, testAdminData);
 
 // increasing warning count of person detected
 router.patch("/warning-person-detected", requireSignIn, increasePersonDetected);
-
+ 
 // increasing warning count of voice-detected
 router.patch("/warning-voice-detected", requireSignIn, increaseVoiceDetected);
 

@@ -39,9 +39,10 @@ const WebcamCapture = ({SetwebcamImage}) => {
 			{image === '' ? (
 				<button onClick={capture}>Capture photo</button>
 			) : (
-				<button className="proceed" href="/login">
-					Proceed
-				</button>
+				// <button className="proceed">
+				// 	Proceed
+				// </button>
+				""
 			)}
 		</React.Fragment>
 	);

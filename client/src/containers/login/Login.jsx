@@ -21,7 +21,7 @@ const Login = () => {
 			password: password
 		  };
 		  
-		  const response = await fetch('/api/signin', {
+		  const response = await fetch('https://schneide-exam-protector.onrender.com/api/signin', {
 			method: 'POST',
 			headers: {
 			  'Content-Type': 'application/json'
@@ -30,7 +30,7 @@ const Login = () => {
 		  });
   
 		if (response.ok) {
-		  console.log('Registration successful');
+		  alert('login successful');
 		  const data = await response.json();
       		localStorage.setItem('token', data.token);
       		localStorage.setItem('user_id', data.user?._id);
@@ -38,7 +38,7 @@ const Login = () => {
       		localStorage.setItem('user_name', data.user?.fullName);
 		  navigate('/')
 		} else {
-		  console.error('Registration failed');
+		  alert('email or password is incorrect');
 		}
 	  } catch (error) {
 		console.error('Error:', error);

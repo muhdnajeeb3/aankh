@@ -39,7 +39,7 @@ formLink=localStorage.getItem('examlink')
     }
 
     terminateExam();
-  }
+  } 
 
   // THERE IS BUG HERE :'))
 

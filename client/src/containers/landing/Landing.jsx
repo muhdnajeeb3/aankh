@@ -24,7 +24,7 @@ const Landing = () => {
   const handleJoinClick = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("/api/all-created-test", {
+      const response = await axios.get("https://schneide-exam-protector.onrender.com/api/all-created-test", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

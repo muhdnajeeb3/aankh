@@ -1,23 +1,21 @@
-import React, { useState } from 'react';
-import logo from './../../assets/logofont.svg';
-import { CtaButton } from '../../components';
-import { useNavigate } from 'react-router-dom';
-import './create.css';
-
+import React, { useState } from "react";
+import logo from "./../../assets/logofont.svg";
+import { CtaButton } from "../../components";
+import { useNavigate } from "react-router-dom";
+import "./create.css";
 
 const Create = () => {
   // State to manage form data
 
   const [formData, setFormData] = useState({
-    email: '',
-    organizationName: '',
-    testName: '',
-    questionPaperLink: '',
-    totalExpectedCandidates: '',
-    startDateTimeFormat: '',
-    duration: ''
+    email: "",
+    organizationName: "",
+    testName: "",
+    questionPaperLink: "",
+    totalExpectedCandidates: "",
+    startDateTimeFormat: "",
+    duration: "",
   });
-  
 
   const navigate = useNavigate();
 
@@ -26,50 +24,52 @@ const Create = () => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-	const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     try {
-      const response = await fetch('/api/create-test', {
-        method: 'POST',
+      const response = await fetch("https://schneide-exam-protector.onrender.com/api/create-test", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         // body: JSON.stringify(formData)
-		body: JSON.stringify({
-			email: formData.email,
-			test_name: formData.testName,
-			test_link_by_user: formData.questionPaperLink,
-			start_time: formData.startDateTimeFormat,
-			end_time: formData.endDateTimeFormat,
-			no_of_candidates_appear: parseInt(formData.totalExpectedCandidates),
-			total_threshold_warnings: 11
-			// total_threshold_warnings: parseInt(formData.totalThresholdWarnings)
-		  })
-		
+        body: JSON.stringify({
+          email: formData.email,
+          test_name: formData.testName,
+          test_link_by_user: formData.questionPaperLink,
+          start_time: formData.startDateTimeFormat,
+          end_time: formData.endDateTimeFormat,
+          no_of_candidates_appear: parseInt(formData.totalExpectedCandidates),
+          total_threshold_warnings: 11,
+          // total_threshold_warnings: parseInt(formData.totalThresholdWarnings)
+        }),
       });
 
       if (response.ok) {
-        console.log('Test creation successful');
-        navigate('/success');
+        console.log("Test creation successful");
+        navigate("/success");
       } else {
-        console.error('Test creation failed');
+        console.error("Test creation failed");
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
   return (
     <div className="client-create">
       <div className="logo">
-        <img src='https://www.schneideit.com/wp-content/uploads/2020/12/schneide-logo.svg' alt="schneide-logo" />
+        <img
+          src="https://www.schneideit.com/wp-content/uploads/2020/12/schneide-logo.svg"
+          alt="schneide-logo"
+        />
       </div>
       <div className="create-form">
         <h1 className="title-heading">Create a test</h1>

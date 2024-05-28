@@ -66,17 +66,17 @@
 .image-capture img {
 	z-index: 10;
 	height: 200px;
-	position: absolute;
+	/* position: absolute; */
 }
 
 .image-capture .captured {
 	z-index: 10;
 	height: 250px;
-	position: absolute;
+	/* position: absolute; */
 }
 
 .image-capture img {
 	z-index: 10;
 	height: 200px;
-	position: absolute;
+	/* position: absolute; */
 }

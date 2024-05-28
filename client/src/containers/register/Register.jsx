@@ -3,6 +3,8 @@ import logo from './../../assets/logofont.svg';
 import human from './../../assets/human.svg';
 import { CtaButton, WebcamCapture } from '../../components';
 import './register.css';
+import { useNavigate } from "react-router-dom";
+
 
 
 const Register = () => {
@@ -11,6 +13,8 @@ const Register = () => {
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
   const [webcamImage, SetwebcamImage] = useState()
+
+  const navigate = useNavigate();
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
@@ -23,15 +27,17 @@ const Register = () => {
       formData.append('password', password);
       formData.append('profilePicture', webcamImage);
 
-      const response = await fetch('/api/register', {
+      const response = await fetch('https://schneide-exam-protector.onrender.com/api/register', {
         method: 'POST',
         body: formData
       });
 
       if (response.ok) {
+        alert('Registration successful')
         console.log('Registration successful');
+        navigate('/login')
       } else {
-        console.error('Registration failed');
+        alert('Registration failed');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -80,7 +86,10 @@ const Register = () => {
             />
           </div>
           <div className="image-capture">
+            {
+              !SetwebcamImage && 
             <img src={human} alt="human-outline" />
+            }
             <WebcamCapture SetwebcamImage={SetwebcamImage}/>
           </div>
           <CtaButton text="Register" type="submit" />
