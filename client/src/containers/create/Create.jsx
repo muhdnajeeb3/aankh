@@ -53,10 +53,9 @@ const Create = () => {
       });
 
       if (response.ok) {
-        console.log("Test creation successful");
-        navigate("/success");
+        alert("Test creation successful");
       } else {
-        console.error("Test creation failed");
+        alert("Test creation failed");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -126,7 +125,7 @@ const Create = () => {
             <input
               type="text"
               name="duration"
-              placeholder="Duration"
+              placeholder="Duration In Minutes"
               value={formData.duration}
               onChange={handleChange}
               required

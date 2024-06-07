@@ -34,7 +34,9 @@ const Landing = () => {
       // Find the test with the matching join code
       const test =await tests.find((test) => test.test_code === joincode);
       const matchedjoincode =await test?.test_link_by_user;
-      localStorage.setItem('examlink',matchedjoincode)
+      // const duration =await test?.duration;
+      localStorage.setItem('examlink',matchedjoincode);
+      // localStorage.setItem('duration',duration);
       navigate('/exam')
       console.log(matchedjoincode);
     } catch (error) {

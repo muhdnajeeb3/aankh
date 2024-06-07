@@ -71,9 +71,20 @@ const increasePersonDetected = async (req, res) => {
         const updateData = await User.findOneAndUpdate({ _id: userId }, {
             $inc: { person_detected: 1 }
         })
-        res.status(200).json({ msg: "warning of person detected" });
+        res.status(200).json({ msg: "warning of person detected" }); 
     }
 }
+
+// Handler to get warnings for all users
+const getAllWarnings = async (req, res) => {
+    try {
+      const users = await User.find({}, 'studentID person_detected voice_detected face_covering other_warning_fields');
+      res.status(200).json(users);
+    } catch (error) {
+      console.error("Error fetching all warnings:", error);
+      res.status(500).json({ msg: "Internal Server Error" });
+    }
+  };
 
 const increaseVoiceDetected = async (req, res) => {
     const userId = req.user.id;
@@ -110,16 +121,38 @@ const totalWarnings = (req, res) => {
     }
 }
 
+// const terminateExam = async (req, res) => {
+//     const userId = req.user?.id;
+//     if (userId) {
+//         const updateData = await User.findOneAndUpdate({ _id: userId }, {
+//             status: "block"
+//         });
+//         // res.status(200).json({ updateData });
+//         res.status(200).json({ msg: "candidate has been blocked" })
+//     }
+// }
 const terminateExam = async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.params.userId;
     if (userId) {
-        const updateData = await User.findOneAndUpdate({ _id: userId }, {
-            status: "block"
-        });
-        // res.status(200).json({ updateData });
-        res.status(200).json({ msg: "candidate has been blocked" })
+      try {
+        await User.findOneAndUpdate({ _id: userId }, { status: "block" });
+        res.status(200).json({ msg: "Candidate has been blocked" });
+      } catch (error) {
+        res.status(500).json({ msg: "Error blocking candidate", error });
+      }
+    } else {
+      res.status(400).json({ msg: "Invalid user ID" });
     }
-}
+  };
+  const getTerminatedUsers = async (req, res) => {
+    try {
+        const terminatedUsers = await User.find({ status: "block" });
+        res.status(200).json(terminatedUsers);
+    } catch (error) {
+        res.status(500).json({ msg: "Error fetching terminated users", error });
+    }
+};
+
 
 const allowInExam = async (req, res) => {
     const userId = req.user.id;
@@ -131,6 +164,17 @@ const allowInExam = async (req, res) => {
         res.status(200).json({ msg: "candidate is now allowed to give exam" })
     }
 }
+
+const getAllowedUsers = async (req, res) => {
+    try {
+        const allowedUsers = await User.find({ status: "safe" });
+        res.status(200).json(allowedUsers);
+    } catch (error) {
+        res.status(500).json({ msg: "Failed to fetch allowed users", error });
+    }
+};
+
+
 
 module.exports = {
     createTest,
@@ -145,5 +189,8 @@ module.exports = {
     increaseFaceCovering,
     totalWarnings,
     terminateExam,
-    allowInExam
+    allowInExam,
+    getAllWarnings,
+    getTerminatedUsers,
+    getAllowedUsers
 }

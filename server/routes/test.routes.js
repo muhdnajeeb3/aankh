@@ -10,6 +10,9 @@ const {
     totalWarnings,
     terminateExam,
     allowInExam,
+    getAllWarnings ,
+    getTerminatedUsers,
+    getAllowedUsers
 } = require("../controllers/test.control");
 const { requireSignIn } = require("../middlewares");
 const router = express.Router();
@@ -27,7 +30,10 @@ router.patch("/test-register/:test_code", requireSignIn, testRegister);
 router.get("/test-live-status/:test_code", requireSignIn, testAdminData);
 
 // increasing warning count of person detected
-router.patch("/warning-person-detected", requireSignIn, increasePersonDetected);
+router.patch("/warning-person-detected", requireSignIn, increasePersonDetected);  
+
+router.get("/all-warnings", requireSignIn, getAllWarnings); // New route to get all warnings
+
  
 // increasing warning count of voice-detected
 router.patch("/warning-voice-detected", requireSignIn, increaseVoiceDetected);
@@ -39,9 +45,12 @@ router.patch("/warning-face-covering", requireSignIn, increaseFaceCovering);
 router.get("/total-warnings", requireSignIn, totalWarnings);
 
 // route that will terminate the exam of candidate
-router.patch("/terminate", requireSignIn, terminateExam);
+router.patch("/terminate/:userId", requireSignIn, terminateExam);
 
+router.get("/terminated-users", requireSignIn, getTerminatedUsers);
 // route that will allow the terminated candidates to give an exam
-router.patch("/allow-in-exam", requireSignIn, allowInExam);
+router.patch("/allow-in-exam/:id", requireSignIn, allowInExam);
+
+router.get("/allowed-users", requireSignIn, getAllowedUsers);
 
 module.exports = router;
