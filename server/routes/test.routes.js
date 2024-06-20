@@ -49,7 +49,7 @@ router.patch("/terminate/:userId", requireSignIn, terminateExam);
 
 router.get("/terminated-users", requireSignIn, getTerminatedUsers);
 // route that will allow the terminated candidates to give an exam
-router.patch("/allow-in-exam/:id", requireSignIn, allowInExam);
+router.patch("/allow-in-exam/:userId", requireSignIn, allowInExam);
 
 router.get("/allowed-users", requireSignIn, getAllowedUsers);
 

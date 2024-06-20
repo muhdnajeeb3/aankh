@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from './../../assets/logofont.svg';
 import {  CtaButton } from '../../components';
-import {useNavigate} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import './login.css';
 
 const Login = () => {
@@ -74,6 +74,13 @@ const Login = () => {
 			  />
 			</div>
 			<CtaButton text="Login" type="submit" />
+			<div style={{display:'flex',gap:'10px'}}>
+				
+			<div style={{display:'flex',gap:'10px',alignItems:'center'}}><p>If you dont have account please register</p>
+
+			<Link to='register' className="ctabutton">Register</Link>
+			</div>
+			</div>
 		  </form>
 		</div>
 	  </div>

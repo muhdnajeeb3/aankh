@@ -5,14 +5,17 @@
   "private": true,
   "dependencies": {
     "axios": "^1.7.1",
+    "bootstrap": "^5.3.3",
     "chart.js": "^2.9.4",
     "devtools-detect": "^4.0.2",
     "react": "^17.0.2",
+    "react-bootstrap": "^2.10.2",
     "react-chartjs-2": "^2.11.2",
     "react-dom": "^17.0.2",
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^5.0.1",
+    "react-toastify": "^8.2.0",
     "react-webcam": "^6.0.0"
   },
   "scripts": {

@@ -3,9 +3,13 @@ import logo from "./../../assets/logofont.svg";
 import { CtaButton } from "../../components";
 import { useNavigate } from "react-router-dom";
 import "./create.css";
+import { Button, Modal } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Create = () => {
   // State to manage form data
+  const [show, setShow] = useState(false);
+  const [testCode, setTestCode] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -16,7 +20,8 @@ const Create = () => {
     startDateTimeFormat: "",
     duration: "",
   });
-
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   const navigate = useNavigate();
 
   // Function to handle input change
@@ -33,7 +38,7 @@ const Create = () => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("https://schneide-exam-protector.onrender.com/api/create-test", {
+      const response = await fetch("/api/create-test", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,17 +56,32 @@ const Create = () => {
           // total_threshold_warnings: parseInt(formData.totalThresholdWarnings)
         }),
       });
+      const result = await response.json();
+      setTestCode(result?.test_code);
+      console.log(result);
 
       if (response.ok) {
-        alert("Test creation successful");
+        // alert(`Test creation successful. Test Code: ${result?.test_code}`);
+        handleShow();
       } else {
-        alert("Test creation failed");
+        alert(result.msg || "Test creation failed");
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
+  const handleCopyClick = () => {
+    navigator.clipboard
+      .writeText(testCode)
+      .then(() => {
+        alert("Test code copied to clipboard.");
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
   return (
     <div className="client-create">
       <div className="logo">
@@ -131,6 +151,17 @@ const Create = () => {
               required
             />
           </div>
+          <Modal centered show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Test Code</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>{testCode}</Modal.Body>
+            <Modal.Footer>
+              <Button variant="primary" onClick={handleCopyClick}>
+                Copy
+              </Button>
+            </Modal.Footer>
+          </Modal>
           <CtaButton text="Create" type="submit" />
         </form>
       </div>

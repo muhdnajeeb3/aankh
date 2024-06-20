@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Timer, WebLiveCapture } from "./../../components";
 import devtools from "devtools-detect";
 import "./exam.css";
+import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
 const Exam = ({
@@ -16,15 +17,17 @@ const Exam = ({
   const [isDevToolsOpen, setIsDevToolsOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(true);
   const [showMessage, setShowMessage] = useState("");
-  const [allowedUsers, setAllowedUsers] = useState([]);
   const [terminatedUsers, setTerminatedUsers] = useState([]);
+  const [userStatus, setUserStatus] = useState("");
+  const [isTerminated, setIsTerminated] = useState(false);
 
   // TO EMBED
   formLink += "?embedded=true";
+
   const increasePersonDetected = async () => {
     try {
       await axios.patch(
-        "https://schneide-exam-protector.onrender.com/api/warning-person-detected",
+        "/api/warning-person-detected",
         {},
         {
           headers: {
@@ -36,22 +39,31 @@ const Exam = ({
       console.error("Failed to increase person detected warning count:", error);
     }
   };
-
-  const fetchAllowedUsers = async () => {
+  const notify = () => toast.error("You no longer access to this exam");
+  const Terminate = async () => {
     try {
-      const response = await axios.get("/api/allowed-users", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setAllowedUsers(response.data);
+      const response = await axios.patch(
+        `/api/terminate/${studentID}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        alert("User Terminated");
+        setIsTerminated(true);
+        setUserStatus("block");
+      }
     } catch (error) {
       console.error(
-        "Failed to fetch allowed users:",
+        "Failed to Terminate",
         error.response?.data || error.message
       );
     }
   };
+
   const fetchTerminatedUsers = async () => {
     try {
       const response = await axios.get("/api/terminated-users", {
@@ -60,6 +72,8 @@ const Exam = ({
         },
       });
       setTerminatedUsers(response.data);
+      const user = response.data.find((user) => studentID === user._id);
+      if (user) setUserStatus(user.status);
     } catch (error) {
       console.error(
         "Failed to fetch terminated users:",
@@ -67,10 +81,20 @@ const Exam = ({
       );
     }
   };
+
   useEffect(() => {
-    fetchAllowedUsers();
     fetchTerminatedUsers();
-  }, []); 
+  }, []);
+
+  useEffect(() => {
+    if (userStatus === "block") {
+      notify();
+      setShowMessage("You are Not Allowed. Please contact admin");
+      disableForm();
+      let overlay = document.getElementById("overlay");
+      overlay.classList.add("terminate");
+    }
+  }, [userStatus]);
 
   useEffect(() => {
     const devtoolsDetector = setInterval(() => {
@@ -82,19 +106,17 @@ const Exam = ({
         setIsDevToolsOpen(true);
         setShowMessage("Your exam will terminate. Please close devtools.");
         disableForm();
-        // alert("Developer tools are not allowed during the exam.");
-        // Hide the message after 5 seconds
-        // setTimeout(() => setShowMessage(""), 5000);
-        setTimeout(() => enableForm(), 10000);
+        if (userStatus !== "block") {
+          setTimeout(() => enableForm(), 10000);
+        }
       } else {
         setIsDevToolsOpen(false);
-        // enableForm();
       }
       terminateExam();
     }, 500);
 
     return () => clearInterval(devtoolsDetector);
-  }, [warningCnt, isDevToolsOpen]);
+  }, [warningCnt, isDevToolsOpen, userStatus]);
 
   useEffect(() => {
     const interval = setInterval(check, 10000);
@@ -112,6 +134,7 @@ const Exam = ({
     );
     btn.click();
   }
+
   useEffect(() => {
     let intervalId; // To store the interval ID
 
@@ -119,8 +142,8 @@ const Exam = ({
       setWarningCnt((prev) => prev + 1);
       setShowMessage("More Than One People detected");
       disableForm();
-      // alert("more than one people detected");
       increasePersonDetected();
+
       // Display the message every 5 seconds
       intervalId = setInterval(() => {
         setShowMessage("Multiple People detected");
@@ -132,29 +155,25 @@ const Exam = ({
         }
       }, 5000);
     } else {
-      enableForm();
-      // Clear the interval when peopledetected is not greater than 1
+      if (userStatus !== "block") {
+        enableForm();
+      }
       clearInterval(intervalId);
     }
 
-    // Clean up the interval when the component unmounts
     return () => {
       clearInterval(intervalId);
     };
-  }, [peopledetected]);
+  }, [peopledetected, userStatus]);
 
   function check() {
-    // if (!window.screenTop && !window.screenY && isFullScreen) {
-    //   setIsFullScreen(false);
-    // }
-    // if (!isFullScreen) {
-    //   setWarningCnt(warningCnt + 1);
-    //   setShowMessage("Your exam will terminate. Please go to full screen mode.");
-    //   disableForm();
-    // } else {
-    //   enableForm();
-    // }
-    // terminateExam();
+    if (!isFullScreen) {
+      setWarningCnt(warningCnt + 1);
+      setShowMessage(
+        "Your exam will terminate. Please go to full screen mode."
+      );
+      disableForm();
+    }
   }
 
   function disableForm() {
@@ -166,18 +185,22 @@ const Exam = ({
   }
 
   function enableForm() {
-    let overlay = document.getElementById("overlay");
-    let formBlur = document.getElementById("form-blur");
-    overlay.classList.add("hide");
-    overlay.classList.remove("disable");
-    formBlur.classList.remove("blur");
+    if (userStatus !== "block") {
+      let overlay = document.getElementById("overlay");
+      let formBlur = document.getElementById("form-blur");
+      overlay.classList.add("hide");
+      overlay.classList.remove("disable");
+      formBlur.classList.remove("blur");
+    }
   }
 
   function terminateExam() {
-    if (warningCnt > 5) {
+    if (warningCnt > 5 && !isTerminated) {
+      // Check if already terminated
       disableForm();
       let overlay = document.getElementById("overlay");
       overlay.classList.add("terminate");
+      Terminate();
     }
   }
 
@@ -193,6 +216,7 @@ const Exam = ({
             <h4 className="student-id">Student ID: {studentID}</h4>
             <h4 className="student-email">Student Email: {studentEmail}</h4>
           </div>
+          <ToastContainer />
         </div>
       </div>
       <div className="embedded-form">

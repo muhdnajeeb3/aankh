@@ -28,31 +28,36 @@ const Status = ({
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-	  const terminatedresponse = await axios.get("/api/terminated-users", {
+      const terminatedresponse = await axios.get("/api/terminated-users", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const AllowedUsers = await axios.get("/api/allowed-users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       const warningsData = response.data;
       const terminatedData = terminatedresponse.data;
-	  console.log(terminatedData.length);
+      const allowedData = AllowedUsers.data;
 
       // Process data to count the number of students in each category
-      let terminatedCount = terminatedData.length + 1,
-        warningsGt4 = 0 ,
+      let terminatedCount = terminatedData.length,
+        warningsGt4 = 0,
         warningsGt1 = 0,
-        continueCount = 0;
+        continueCount = allowedData.length;
 
       warningsData.forEach((user) => {
         const totalWarnings = user.person_detected;
         if (totalWarnings > 5) {
-          terminatedCount++;
+          return terminatedCount;
         } else if (totalWarnings > 4) {
           warningsGt4++;
         } else if (totalWarnings > 1) {
           warningsGt1++;
         } else {
-          continueCount++;
+          return allowedData;
         }
       });
 
@@ -104,15 +109,14 @@ const Status = ({
         {/* <h2 className="title-heading">Students Terminated</h2> */}
         <h2 className="title-heading">Students Warnings</h2>
         <div className="terminated-boxes">
-          {warnings
-            .map((item) => (
-              <Terminated
-                studentID={item._id}
-                warningCnt={item.person_detected}
-                message="Multiple People Detected"
-                key={item.studentID}
-              />
-            ))}
+          {warnings.map((item) => (
+            <Terminated
+              studentID={item._id}
+              warningCnt={item.person_detected}
+              message="Multiple People Detected"
+              key={item.studentID}
+            />
+          ))}
         </div>
       </div>
     </div>
