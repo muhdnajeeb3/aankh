@@ -8,7 +8,6 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import cv2
 import shutil
-import setuptools.dist
 import numpy as np
 from mark_detector import MarkDetector
 from pose_estimator import PoseEstimator
