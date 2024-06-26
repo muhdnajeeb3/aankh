@@ -2,7 +2,6 @@ import base64
 import logging
 import matplotlib.pyplot as plt
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import os
 import tensorflow as tf
 import tensorflow_hub as hub
